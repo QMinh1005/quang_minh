@@ -727,27 +727,25 @@
         start += duration;
       }
     }
-    $("musicBtn").addEventListener("click",async () => {
-      if (!AudioContextClass) { $("musicBtn").textContent = "Trình duyệt không hỗ trợ nhạc"; return; }
-      if (!audio) {
-        audio = new AudioContextClass();
-        musicGain = audio.createGain(); musicGain.gain.value = .6;
-        musicGain.connect(audio.destination);
-      }
-      if (musicOn) {
-        musicOn = false;
-        clearInterval(musicTimer); musicTimer = null;
-        musicGain.gain.setTargetAtTime(0,audio.currentTime,.05);
+    
+/* NHẠC NỀN SINH NHẬT KHANG */
+
+const bgMusic = new Audio("./nhac.mp3");
+
+bgMusic.loop = true;
+bgMusic.volume = 0.6;
+
+$("musicBtn").addEventListener("click", async () => {
+    if (bgMusic.paused) {
+        try {
+            await bgMusic.play();
+            $("musicBtn").textContent = "♫ Tắt nhạc";
+        } catch (error) {
+            alert("Không phát được nhạc!");
+        }
+    } else {
+        bgMusic.pause();
         $("musicBtn").textContent = "♫ Bật nhạc";
-        $("musicBtn").setAttribute("aria-pressed","false");
-      } else {
-        await audio.resume(); // Trình duyệt chỉ cho phát âm sau khi người dùng bấm.
-        musicOn = true;
-        musicGain.gain.setTargetAtTime(.6,audio.currentTime,.05);
-        playTune();
-        musicTimer = setInterval(playTune,musicDuration*1000);
-        $("musicBtn").textContent = "♫ Tắt nhạc";
-        $("musicBtn").setAttribute("aria-pressed","true");
-      }
-    });
+    }
+});
   </script></body></html>
